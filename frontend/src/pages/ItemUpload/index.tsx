@@ -28,6 +28,16 @@ import Background2 from "../../assets/Background2.jpg";
 import Background3 from "../../assets/Background3.jpg";
 import Background4 from "../../assets/Background4.jpg";
 import Background5 from "../../assets/Background5.jpg";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import ReactCrop, {
+	centerCrop,
+	makeAspectCrop,
+	Crop,
+	PixelCrop,
+} from "react-image-crop";
+import AreaSelector from "./areaSelecctor";
+import "react-image-crop/dist/ReactCrop.css";
 
 const ItemUpload: React.FC = () => {
 	const [form] = Form.useForm();
@@ -38,13 +48,17 @@ const ItemUpload: React.FC = () => {
 	const [fileList, setFileList] = useState<UploadFile[]>([]);
 	const [color, setColor] = useState("");
 	const [selectedCrop, setSelectedCrop] = useState(false);
-	const [bgArray, setBgArray] = useState([
+	const [crop, setCrop] = useState<Crop>();
+	console.log(crop);
+	const bgArray = [
 		Background1,
 		Background2,
 		Background3,
 		Background4,
 		Background5,
-	]);
+	];
+
+	let navigate = useNavigate();
 
 	const getBase64 = (file: RcFile): Promise<string> =>
 		new Promise((resolve, reject) => {
@@ -82,7 +96,6 @@ const ItemUpload: React.FC = () => {
 	);
 
 	const normFile = (e: any) => {
-		console.log("Upload event:", e);
 		if (Array.isArray(e)) {
 			return e;
 		}
@@ -90,7 +103,6 @@ const ItemUpload: React.FC = () => {
 	};
 
 	const con = (e: any) => {
-		console.log("Uploaded");
 		return e?.fileList;
 	};
 
@@ -114,17 +126,57 @@ const ItemUpload: React.FC = () => {
 		setColor(color.hex);
 	};
 
+	const processMedia = async (media: any[]) => {
+		console.log(media);
+		let imageArray: any[] = [];
+		media.map(async (media: any, i: Number) => {
+			const currentBase64 = await getBase64(media.originFileObj as RcFile);
+			console.log(currentBase64);
+			imageArray.push(currentBase64);
+		});
+		console.log(imageArray);
+		return imageArray;
+	};
+
+	const onFinish = async (values: any) => {
+		let imageArray: File[] = [];
+		console.log(fileList);
+		// imageArray = await processMedia(values.media);
+		values.media.map(async (media: any, i: Number) => {
+			imageArray.push(media.originFileObj as File);
+		});
+		console.log(imageArray);
+		var formdata = new FormData();
+		formdata.append("name", values.name);
+		formdata.append("category", values.category);
+		formdata.append("oneliner_Description", values.oneliner);
+		formdata.append("detailed_description", values.description);
+		formdata.append("price", values.price);
+		for (let i = 0; i < imageArray.length; i++) {
+			console.log(imageArray[i])
+			formdata.append("image", imageArray[i]);
+		}
+		await axios.post("http://localhost:9000/items", formdata);
+
+		navigate("/")
+
+		return "done";
+	};
+
 	return (
 		<div className="ItemUpload">
 			<Header />
 			<div className="ItemUpload__container">
-				<div className="ItemUpload__container__nav">
-					<ArrowLeftOutlined style={{ marginRight: "10px" }} />
-					Back to Listing Option Page
-				</div>
+				<Link to={"/ListingOptionPage"}>
+					<div className="ItemUpload__container__nav">
+						<ArrowLeftOutlined style={{ marginRight: "10px" }} />
+						Back to Listing Option Page
+					</div>
+				</Link>
+
 				<p className="ItemUpload__container__title">Item Details</p>
 				<div className="ItemUpload__container__form">
-					<Form layout={"vertical"} form={form}>
+					<Form layout={"vertical"} form={form} onFinish={onFinish}>
 						<Form.Item
 							name="name"
 							label="Item Name"
@@ -178,6 +230,7 @@ const ItemUpload: React.FC = () => {
 								placeholder="Write something about the current quality of your item, delivery methods, etc."
 							/>
 						</Form.Item>
+
 						<Form.Item
 							name="media"
 							label="Upload an Image/Video here to show your item! (Max. 5)"
@@ -187,7 +240,7 @@ const ItemUpload: React.FC = () => {
 						>
 							<Upload
 								{...uploadProps}
-								// action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+							// action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
 							>
 								{fileList.length >= 5 ? null : uploadButton}
 							</Upload>
@@ -199,14 +252,50 @@ const ItemUpload: React.FC = () => {
 							onCancel={handleCancel}
 							className="ItemUpload__container__form__uploadModal"
 						>
-							<img
-								alt="example"
-								style={{ width: "200px" }}
-								src={previewImage}
-							/>
+							{selectedCrop ? (
+								<ReactCrop
+									crop={crop}
+									style={{ width: "400px" }}
+									onChange={(c) => setCrop(c)}
+								>
+									<img src={previewImage} />
+								</ReactCrop>
+							) : (
+								<img
+									alt="example"
+									style={{ width: "400px" }}
+									src={previewImage}
+								/>
+							)}
+							{crop ? (
+								<div
+									style={{
+										display: "flex",
+										alignItems: "center",
+										flexDirection: "column",
+										marginTop: "20px",
+									}}
+								>
+									<span style={{ fontSize: "16px", fontWeight: "500" }}>
+										Confirm to remove the background?
+									</span>
+
+									<Button
+										type="primary"
+										className="ItemUpload__container__form__uploadModal__confirmButton"
+									>
+										Yes
+									</Button>
+								</div>
+							) : (
+								""
+							)}
 							<div className="ItemUpload__container__form__uploadModal__buttonGroup">
 								<GatewayOutlined
-									onClick={() => setSelectedCrop(!selectedCrop)}
+									onClick={() => {
+										setSelectedCrop(!selectedCrop);
+										setCrop(undefined);
+									}}
 									style={{ color: selectedCrop ? "black" : "#838383" }}
 									className="ItemUpload__container__form__uploadModal__button"
 								/>
@@ -240,7 +329,6 @@ const ItemUpload: React.FC = () => {
 														key={i}
 														className="ItemUpload__container__form__uploadModal__bgImage"
 														src={bg}
-														onClick={() => console.log(i)}
 													></img>
 												);
 											})}
@@ -253,6 +341,7 @@ const ItemUpload: React.FC = () => {
 						</Modal>
 						<Form.Item>
 							<Button
+								htmlType="submit"
 								type="primary"
 								className="ItemUpload__container__form__submitButton"
 							>

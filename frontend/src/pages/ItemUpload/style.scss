@@ -85,6 +85,17 @@
                     color: black;
                     cursor:pointer;
                 }
+
+                &__confirmButton{
+                    background-color: #0B5286;
+                    border: 0px;
+                    border-radius: 5px;
+                    margin-top:20px;
+                }
+    
+                &__confirmButton:hover{
+                    background-color: #3175a8;
+                }
             }
         }
         

@@ -1,0 +1,133 @@
+.ListingOptionPage{
+    background-color: #F9FBFC;
+    min-height:100vh;
+
+    &__container{
+        padding-top: 50px;
+        padding-left: 200px;
+        padding-right:200px;
+        padding-bottom: 50px;
+
+        &__nav {
+            color: #838383;
+            margin-bottom: 50px;
+        }
+
+        &__title{
+            color: #094470;
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        &__cards{
+            display: grid;
+            grid: auto 1fr / 1fr 1fr;
+            grid-template-areas: 
+            "optionOne optionTwo"
+            "pastPurchases pastPurchases";
+            gap: 40px;
+            place-items: center;
+
+            &__optionOne{
+                grid-area: optionOne;
+                padding: 30px 10px 10px 10px;
+                border-radius: 15px;
+                text-align: center;
+                justify-self: end;
+                
+            }
+
+            &__optionTwo{
+                grid-area: optionTwo;
+                padding: 30px 10px 10px 10px;
+                border-radius: 15px;
+                text-align: center;
+                justify-self: start;
+            }
+
+            &__pastPurchases{
+                grid-area: pastPurchases;
+                width: 100%;
+                border-radius: 15px;
+            
+                &__item{
+                    border: 1px solid #F9FBFC;
+                    border-radius: 15px;
+                    overflow: hidden;
+                    margin-bottom: 15px;
+                    display: grid;
+                    grid-template-columns: auto 1fr auto;
+                    gap: 10px;
+
+                    &__picture{
+                        min-width: 60px;
+                        background-size: contain;
+                        background-repeat: no-repeat;
+                        background-position: center;
+                      
+                    }
+
+                    &__details{
+                        width: 100%;
+                        padding: 10px;
+                        background-color: white;
+
+                        &__name{
+                            color: black;
+
+                        }
+
+                        &__price{
+                            color: #AB2718;
+                            font-weight: bold;
+                            
+                        }
+
+                        &__people{
+                            color: #838383;
+                        }
+                        
+                    }
+
+                    &__button{
+                        min-width: min-content;
+                        padding: 10px;
+                        background-color: #AB2718;
+                        color: white;
+                        font-weight: bold;
+                        display: grid;
+                        place-items: center;
+                        
+                    }
+
+                    &__button:hover{
+                        min-width: min-content;
+                        padding: 10px;
+                        background-color: #ca4435;
+                        color: white;
+                        font-weight: bold;
+                        display: grid;
+                        place-items: center;
+                        
+                    }
+                }
+
+                &__item:hover{
+                    box-shadow: 3px 3px 3px #F9FBFC;
+                }
+
+                &__showMore{
+                    font-size: 0.8rem;
+                    text-align: center;
+                    color: #838383;
+                    padding-top: 5px;
+                }
+
+            }
+
+        }
+            
+    }
+
+}

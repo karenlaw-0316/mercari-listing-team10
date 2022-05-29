@@ -15,7 +15,7 @@ const Header: React.FC = () => {
 				</Link>
 			</div>
 			<div>
-				<Button type="primary" className="Header__button" onClick={() => navigate("/ItemUpload")}>
+				<Button type="primary" className="Header__button" onClick={() => navigate("/ListingOptionPage")}>
 					List an Item
 				</Button>
 				<Avatar icon={<UserOutlined />} />

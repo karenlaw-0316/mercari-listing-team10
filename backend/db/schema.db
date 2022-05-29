@@ -4,9 +4,9 @@ CREATE TABLE IF NOT EXISTS items (
     name TEXT,
     category_id INTEGER,
     image_filename TEXT,
-    Oneliner_Description TEXT, 
-    Description TEXT,
-    Price TEXT
+    oneliner_Description TEXT, 
+    detailed_description TEXT,
+    price TEXT
 );
 
 CREATE TABLE IF NOT EXISTS category (
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS source (
 );
 
 CREATE TABLE IF NOT EXISTS files(
-    id INTEGER,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     file1 TEXT,
     file2 TEXT,
     file3 TEXT,
